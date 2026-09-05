@@ -38,7 +38,6 @@ public:
     }
 
     void prepare(int sr) {
-        DBG("compressor.prepare ran");
         sampleRate = sr;
         envelope.prepare(sr);
         update();
