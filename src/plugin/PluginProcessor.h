@@ -3,6 +3,7 @@
 #include <juce_audio_processors/juce_audio_processors.h>
 #include "PluginParameters.h"
 #include <common/dsp/DynamicProcessors.h>
+#include <common/dsp/filters/LinkwitzRileyCrossover.h>
 
 //==============================================================================
 class OTTAudioProcessor final : public juce::AudioProcessor
@@ -45,9 +46,14 @@ public:
     void setStateInformation (const void* data, int sizeInBytes) override;
 
 private:
+    // vOTT::Filters::LinkwitzRileyCrossover lowXover;
+    vOTT::Filters::SecondOrderButterworth lowXover;
     vOTT::Compressor compressor;
 
     PluginParameters parameters {*this};
+
+    juce::AudioParameterFloat* frequency { nullptr };
+    float lastFrequency;
 
     juce::AudioParameterFloat* attack { nullptr };
     juce::AudioParameterFloat* release { nullptr };

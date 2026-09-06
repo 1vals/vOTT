@@ -74,7 +74,7 @@ protected:
 
 class Compressor : public DynamicProcessor {
 public:
-    ~Compressor() = default;
+    virtual ~Compressor() = default;
 
     void process(const juce::dsp::ProcessContextReplacing<float>& context) override;
     float processSample(int channel, float inputValue) override;

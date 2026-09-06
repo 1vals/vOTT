@@ -39,7 +39,7 @@ public:
             old = initValue;
     }
 private:
-    float calculateConstant(float ms) const noexcept;
+    [[nodiscard]] float calculateConstant(float ms) const noexcept;
 
     std::vector<float> y { 2, 0 }; // as in the lowpass filter formula
 

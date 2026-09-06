@@ -21,21 +21,26 @@ private:
 
         auto atkRlsRange = NormalisableRange<float>(0.f, 1000.f, 0.1f, 0.5f);
 
+        layout.add(std::make_unique<AudioParameterFloat>(ParameterID("Low Frequency", 1),
+                                                              "Low Crossover Frequency",
+                                                              NormalisableRange<float>(40.f, 1000.f, 0.1f, 1.f),
+                                                              88));
+
         // parameters for the first compressor
-        layout.add(std::make_unique<AudioParameterFloat>(ParameterID("Threshold", 1),
-                                                          "Threshold",
+        layout.add(std::make_unique<AudioParameterFloat>(ParameterID("Low Comp Threshold", 1),
+                                                          "Low Compressor Threshold",
                                                           NormalisableRange<float>(-60.f, 12.f, 0.5f),
                                                           0));
-        layout.add(std::make_unique<AudioParameterFloat>(ParameterID("Attack", 1),
-                                                            "Attack",
+        layout.add(std::make_unique<AudioParameterFloat>(ParameterID("Low Comp Attack", 1),
+                                                            "Low Compressor Attack",
                                                             atkRlsRange,
                                                             50));
-        layout.add(std::make_unique<AudioParameterFloat>(ParameterID("Release", 1),
-                                                            "Release",
+        layout.add(std::make_unique<AudioParameterFloat>(ParameterID("Low Comp Release", 1),
+                                                            "Low Compressor Release",
                                                             atkRlsRange,
                                                             250));
-        layout.add(std::make_unique<AudioParameterFloat>(ParameterID("Ratio", 1),
-                                                            "Ratio",
+        layout.add(std::make_unique<AudioParameterFloat>(ParameterID("Low Comp Ratio", 1),
+                                                            "Low Compressor Ratio",
                                                             NormalisableRange<float>(1.f, 100.f, 0.5f, 0.5),
                                                             4));
 

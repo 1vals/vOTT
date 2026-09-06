@@ -12,14 +12,17 @@ OTTAudioProcessor::OTTAudioProcessor()
                      #endif
                        )
 {
-    attack = dynamic_cast<juce::AudioParameterFloat*>(parameters.getParameter("Attack"));
+
+    attack = dynamic_cast<juce::AudioParameterFloat*>(parameters.getParameter("Low Comp Attack"));
     jassert (attack != nullptr);
-    release = dynamic_cast<juce::AudioParameterFloat*>(parameters.getParameter("Release"));
+    release = dynamic_cast<juce::AudioParameterFloat*>(parameters.getParameter("Low Comp Release"));
     jassert (release != nullptr);
-    threshold = dynamic_cast<juce::AudioParameterFloat*>(parameters.getParameter("Threshold"));
+    threshold = dynamic_cast<juce::AudioParameterFloat*>(parameters.getParameter("Low Comp Threshold"));
     jassert (threshold != nullptr);
-    ratio = dynamic_cast<juce::AudioParameterFloat*>(parameters.getParameter("Ratio"));
+    ratio = dynamic_cast<juce::AudioParameterFloat*>(parameters.getParameter("Low Comp Ratio"));
     jassert (ratio != nullptr);
+    frequency = dynamic_cast<juce::AudioParameterFloat*>(parameters.getParameter("Low Frequency"));
+    jassert (frequency != nullptr);
 }
 
 OTTAudioProcessor::~OTTAudioProcessor()
@@ -94,7 +97,8 @@ void OTTAudioProcessor::changeProgramName (int index, const juce::String& newNam
 //==============================================================================
 void OTTAudioProcessor::prepareToPlay (double sampleRate, int samplesPerBlock)
 {
-    // compressor.prepare(static_cast<int>(sampleRate));
+    compressor.prepare(static_cast<int>(sampleRate));
+    lowXover.prepare(static_cast<int>(sampleRate), getTotalNumOutputChannels());
     juce::ignoreUnused (sampleRate, samplesPerBlock);
 }
 
@@ -140,6 +144,8 @@ void OTTAudioProcessor::processBlock (juce::AudioBuffer<float>& buffer,
     for (auto i = totalNumInputChannels; i < totalNumOutputChannels; ++i)
         buffer.clear (i, 0, buffer.getNumSamples());
 
+    lowXover.setFilterFrequency(frequency->get());
+
     compressor.setAttack(attack->get());
     compressor.setRelease(release->get());
     compressor.setThreshold(threshold->get());
@@ -147,6 +153,8 @@ void OTTAudioProcessor::processBlock (juce::AudioBuffer<float>& buffer,
 
     auto block = juce::dsp::AudioBlock<float>(buffer);
     auto context = juce::dsp::ProcessContextReplacing<float>(block);
+
+    lowXover.process(context);
 
     compressor.process(context);
     // DBG("compressor.process ran");

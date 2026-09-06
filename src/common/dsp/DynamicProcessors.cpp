@@ -33,6 +33,7 @@ void Compressor::process(const juce::dsp::ProcessContextReplacing<float>& contex
     for (size_t channel = 0; channel < numChannels; ++channel) {
         auto inputSamples = inputBlock.getChannelPointer(channel);
         auto outputSamples = outputBlock.getChannelPointer(channel);
+
         for (size_t i = 0; i < numSamples; ++i)
             outputSamples[i] = processSample((int)channel, inputSamples[i]);
     }

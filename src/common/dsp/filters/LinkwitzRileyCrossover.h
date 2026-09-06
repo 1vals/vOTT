@@ -26,10 +26,10 @@ struct LinkwitzRileyCrossover {
     }
 
     void process(const juce::dsp::ProcessContextReplacing<float>& context) {
-        DBG("xover process running");
+        // DBG("xover process running");
         stage1.process(context);
         stage2.process(context);
-        DBG("xover process complete");
+        // DBG("xover process complete");
     }
 private:
     SecondOrderButterworth stage1, stage2;
