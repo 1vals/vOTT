@@ -39,21 +39,28 @@ struct SecondOrderButterworth {
                 auto inputSamples = inputBlock.getChannelPointer(channel);
                 auto outputSamples = outputBlock.getChannelPointer(channel);
 
-                for (size_t i = 0; i < outputBlock.getNumSamples(); ++i)
+
+                for (size_t i = 0; i < outputBlock.getNumSamples(); ++i) {
                     outputSamples[i] = processSample((int) channel, inputSamples[i]);
+                }
             }
         }
 
         float processSample(int channel, float x0) {
-            auto& s = state[(size_t)channel];
+            auto& s = state[static_cast<size_t>(channel)];
+
+            // DBG("x0 = " << x0);
 
             // direct form 1
             float y0 = b0 * x0 + b1 * s.x1 + b2 * s.x2 - a1 * s.y1 - a2 * s.y2;
 
+            // move the state for next sample process
             s.x2 = s.x1;
             s.x1 = x0;
             s.y2 = s.y1;
             s.y1 = y0;
+
+            // DBG("y0 = " << y0);
 
             return y0;
         }
@@ -67,6 +74,7 @@ struct SecondOrderButterworth {
         };
 
         void updateCoefficients() {
+            DBG("updateCoefficients() ran");
             omega0 = (juce::MathConstants<float>::twoPi * centerFreq) / (float)sampleRate;
             alpha = (std::sin(omega0)) / (2.f * Q);
 
@@ -80,7 +88,7 @@ struct SecondOrderButterworth {
             }
         }
 
-        float calculateLPCoeffs() {
+        void calculateLPCoeffs() {
             float cosW0 = std::cos(omega0);
 
             float rawB1 = 1 - cosW0;
@@ -94,7 +102,7 @@ struct SecondOrderButterworth {
             normalize(rawB0, rawB1, rawB2, rawA0, rawA1, rawA2);
         }
 
-        float calculateHPCoeffs() {
+        void calculateHPCoeffs() {
             float cosW0 = std::cos(omega0);
 
             float rawB0 = (1 + cosW0) / 2;
