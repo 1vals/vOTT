@@ -30,12 +30,22 @@ void Compressor::process(const juce::dsp::ProcessContextReplacing<float>& contex
         return;
     }
 
-    for (size_t channel = 0; channel < numChannels; ++channel) {
-        auto inputSamples = inputBlock.getChannelPointer(channel);
-        auto outputSamples = outputBlock.getChannelPointer(channel);
+    for (size_t i = 0; i < numSamples; ++i) {
+        // update ratio / threshold here, so that the smoothing can happen during the process
+        if (smoothedRatio.isSmoothing()) {
+            ratio = smoothedRatio.getNextValue();
+        }
+        if (smoothedThreshold.isSmoothing()) {
+            thresholdDb = smoothedThreshold.getNextValue();
+            thresholdGain = juce::Decibels::gainToDecibels(thresholdDb, -100.f);
+        }
 
-        for (size_t i = 0; i < numSamples; ++i)
+        for (size_t channel = 0; channel < numChannels; ++channel) {
+            auto inputSamples = inputBlock.getChannelPointer(channel);
+            auto outputSamples = outputBlock.getChannelPointer(channel);
+
             outputSamples[i] = processSample((int)channel, inputSamples[i]);
+        }
     }
 }
 } // vOTT

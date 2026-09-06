@@ -63,6 +63,8 @@ protected:
     float thresholdDb;
     float ratio;
 
+    juce::SmoothedValue<float> smoothedRatio, smoothedThreshold;
+
     // the threshold used in dsp math
     float thresholdGain;
 
