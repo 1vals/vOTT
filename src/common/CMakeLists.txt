@@ -1,5 +1,7 @@
 add_library(common STATIC
     Parameters.h
+    BandStrip.cpp
+    BandStrip.h
 
     dsp/DynamicProcessors.cpp
     dsp/DynamicProcessors.h
