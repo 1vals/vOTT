@@ -18,29 +18,31 @@ namespace vOTT {
 
 class DynamicProcessor {
 public:
-    DynamicProcessor();
+    DynamicProcessor() = default;
 
     void setAttack(float newAttack) {
         attack = newAttack;
-        update();
+        envelope.setAttackTime(attack);
     }
     void setRelease(float newRelease) {
         release = newRelease;
-        update();
+        envelope.setReleaseTime(release);
     }
     void setThreshold(float newThreshold) {
-        thresholdDb = newThreshold;
-        update();
+        smoothedThreshold.setTargetValue(newThreshold);
     }
     virtual void setRatio(float newRatio) {
-        ratio = newRatio;
-        update(); // does this even need to call this
+        smoothedRatio.setTargetValue(newRatio);
     }
 
     void prepare(int sr) {
         sampleRate = sr;
+        thresholdGain = juce::Decibels::decibelsToGain(thresholdDb, -100.f);
+
         envelope.prepare(sr);
-        update();
+        envelope.setAttackTime(attack);
+        envelope.setReleaseTime(release);
+
         envelope.reset();
     }
 
@@ -48,13 +50,6 @@ public:
     virtual float processSample(int channel, float inputValue) = 0;
 
 protected:
-    virtual void update() {
-        thresholdGain = juce::Decibels::decibelsToGain(thresholdDb, -100.f);
-
-        envelope.setAttackTime(attack);
-        envelope.setReleaseTime(release);
-    }
-
     Envelope envelope;
 
     // UI parameters

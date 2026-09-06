@@ -1,21 +1,13 @@
 #include "DynamicProcessors.h"
 
 namespace vOTT {
-DynamicProcessor::DynamicProcessor() {
-    update();
-}
 
 float Compressor::processSample(int channel, float inputValue) {
-    // DBG("input value: " << inputValue);
     auto env = envelope.processSample(channel, inputValue);
-
-    // DBG("thresholdGain: " << thresholdGain);
 
     auto gain = (env < thresholdGain) ? 1.f
                                            : std::pow(env * (1 / thresholdGain), (1 / ratio) - 1.f);
-    // DBG("gain: " << gain);
 
-    // DBG("output value: " << gain*inputValue);
     return gain * inputValue;
 }
 
