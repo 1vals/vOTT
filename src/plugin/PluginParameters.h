@@ -1,6 +1,6 @@
 #pragma once
 
-#include <common/Parameters.h>
+#include <../common/dsp/utils/ApvtsWrapper.h>
 
 /**
  * plugin/PluginParameters.h
@@ -10,9 +10,9 @@
  * todo: figure out a way where the parameterLayout.add() shit can be condensed into loops & have the naming work right
  */
 
-class PluginParameters : public vOTT::Parameters {
+class PluginParameters : public vOTT::ApvtsWrapper {
 public:
-    PluginParameters(juce::AudioProcessor& p) : Parameters(p, createParameterLayout()) {}
+    PluginParameters(juce::AudioProcessor& p) : ApvtsWrapper(p, createParameterLayout()) {}
 
 private:
     static juce::AudioProcessorValueTreeState::ParameterLayout createParameterLayout() {

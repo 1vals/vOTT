@@ -1,21 +1,21 @@
 add_library(common STATIC
-    Parameters.h
+        ApvtsWrapper.h
 
-    dsp/DynamicProcessors.cpp
-    dsp/DynamicProcessors.h
-    dsp/Envelope.cpp
-    dsp/Envelope.h
+        dsp/DynamicProcessors.cpp
+        dsp/DynamicProcessors.h
+        dsp/Envelope.cpp
+        dsp/Envelope.h
 
-    dsp/filters/SecondOrderButterworth.h
-    dsp/filters/LinkwitzRileyCrossover.h
+        dsp/filters/SecondOrderButterworth.h
+        dsp/filters/LinkwitzRileyCrossover.h
 
         dsp/utils/ValueSmoother.h
         dsp/utils/Utils.h
 )
 
 target_link_libraries(common PRIVATE
-    juce::juce_dsp
-    juce::juce_audio_utils
+        juce::juce_dsp
+        juce::juce_audio_utils
 )
 
 target_include_directories(common PUBLIC
