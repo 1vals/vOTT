@@ -1,5 +1,7 @@
 add_library(common STATIC
         ApvtsWrapper.h
+        BandStrip.h
+        BandStrip.cpp
 )
 
 target_link_libraries(common PRIVATE

@@ -1,8 +1,6 @@
 #pragma once
 
-#include "dsp/DynamicProcessors.h"
-#include "dsp/filters/SecondOrderButterworth.h"
-
+#include <dsp/dsp.h>
 /**
  * roadmap:
  * get Linkwitz-Riley filter to work in processblock
@@ -11,48 +9,38 @@
  */
 namespace vOTT {
 
+    enum BandType {
+        low,
+        mid,
+        high
+    };
+
 class BandStrip {
 public:
-    Bandstrip() = default;
-
-    void prepare(int sampleRate, int numChannels) {
-        xover1.prepare(sampleRate, numChannels);
-        xover2.prepare(sampleRate, numChannels);
-        comp.prepare(sampleRate);
+    BandStrip(BandType type) {
+        bandType = type;
     }
 
-    void setFilterType(Filters::SecondOrderButterworth::FilterType type) {
-        xover1.setFilterType(type);
-        xover2.setFilterType(type);
-    }
+    void prepare(int sampleRate, int numChannels);
 
     void setFilterFrequency(float newFreq) {
-        if (newFreq == freq)
-            return;
-
-        freq = newFreq;
-        xover1.setFilterFrequency(newFreq);
-        xover2.setFilterFrequency(newFreq);
+        for (auto& x : xovers)
+            x.setFilterFrequency(newFreq);
+    }
+    void updateCompressorParams(const Dynamics::ParamPtrs& params) {
+        compressor.updateParams(params);
+    }
+    void updateUpwardsCompParams(const Dynamics::ParamPtrs& params) {
+        upwardsCompressor.updateParams(params);
     }
 
-    void process(const juce::dsp::ProcessContextReplacing<float>& context) {
-        xover1.process(context);
-        xover2.process(context);
-
-        // comp.process(context);
-    }
+    void process(const juce::dsp::ProcessContextReplacing<float>& context);
 private:
-    Filters::SecondOrderButterworth xover1, xover2;
-    float freq;
+    BandType bandType;
+    std::vector<Filters::SecondOrderButterworth> xovers;
 
-    struct CompExpParams {
-        float attack,
-        release,
-        ratio,
-        threshold;
-    };
-    Compressor comp;
-    CompExpParams compParams;
+    Compressor compressor;
+    UpwardsCompressor upwardsCompressor;
 };
 
 }
