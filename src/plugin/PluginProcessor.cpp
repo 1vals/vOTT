@@ -110,7 +110,11 @@ void OTTAudioProcessor::changeProgramName (int index, const juce::String& newNam
 void OTTAudioProcessor::prepareToPlay (double sampleRate, int samplesPerBlock)
 {
     compressor.prepare(static_cast<int>(sampleRate));
+    compressor.forceUpdateAllParams(compParams);
+
     expander.prepare(static_cast<int>(sampleRate));
+    expander.forceUpdateAllParams(expParams);
+
     lowXover.prepare(static_cast<int>(sampleRate), getTotalNumOutputChannels());
 
     juce::ignoreUnused (sampleRate, samplesPerBlock);

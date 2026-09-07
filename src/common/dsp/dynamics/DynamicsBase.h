@@ -6,10 +6,31 @@
 
 namespace vOTT {
 
+namespace Dynamics {
+    struct ParamPtrs {
+        juce::AudioParameterFloat* attack { nullptr };
+        juce::AudioParameterFloat* release { nullptr };
+        juce::AudioParameterFloat* threshold { nullptr };
+        juce::AudioParameterFloat* ratio { nullptr };
+    };
+}
+
 class DynamicsBase {
 public:
-    virtual ~DynamicsBase() = default;
     DynamicsBase() = default;
+    virtual ~DynamicsBase() = default;
+
+    void forceUpdateAllParams(const Dynamics::ParamPtrs& params) {
+        attack = params.attack->get();
+        release = params.release->get();
+        envelope.setAttackTime(attack);
+        envelope.setReleaseTime(release);
+
+        ratio = params.ratio->get();
+        thresholdDb = params.threshold->get();
+        smoothedRatio.reset(ratio);
+        smoothedThreshold.reset(thresholdDb);
+    }
 
     void updateParams(float threshold_, float ratio_, float attack_, float release_) {
         if (attack != attack_) {

@@ -14,5 +14,6 @@
 
 # message(STATUS "Building vOTT with the following plugin formats: ${JUCE_PLUGIN_FORMATS}" )
 
+add_subdirectory(common/dsp)
 add_subdirectory(common)
 add_subdirectory(plugin)

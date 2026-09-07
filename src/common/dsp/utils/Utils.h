@@ -17,4 +17,8 @@ namespace vOTT::Utils {
     return ms < static_cast<float>(1.0e-3) ? 0
                                            : (std::exp(expFactor / ms));
 }
+
+// todo: create a float/double comparison here:
+// template<typename type>
+// inline bool isAlmostEqual(type value1, type value2);
 }

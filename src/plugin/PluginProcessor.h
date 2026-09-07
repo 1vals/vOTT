@@ -2,7 +2,7 @@
 
 #include <juce_audio_processors/juce_audio_processors.h>
 #include "PluginParameters.h"
-#include <common/dsp/dynamics/dynamics.h>
+#include <dsp/dsp.h>
 #include <common/dsp/filters/LinkwitzRileyCrossover.h>
 
 //==============================================================================
@@ -56,16 +56,8 @@ private:
     juce::AudioParameterFloat* frequency { nullptr };
     float lastFrequency;
 
-    struct DynamicsParameters {
-        juce::AudioParameterFloat* attack { nullptr };
-        juce::AudioParameterFloat* release { nullptr };
-        juce::AudioParameterFloat* threshold { nullptr };
-        juce::AudioParameterFloat* ratio { nullptr };
-    };
-
-    // when multiple bands are added, these can be converted into vectors
-    DynamicsParameters compParams;
-    DynamicsParameters expParams;
+    vOTT::Dynamics::ParamPtrs expParams;
+    vOTT::Dynamics::ParamPtrs compParams;
 
     //==============================================================================
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (OTTAudioProcessor)
