@@ -49,6 +49,7 @@ private:
     // vOTT::Filters::LinkwitzRileyCrossover lowXover;
     vOTT::Filters::SecondOrderButterworth lowXover;
     vOTT::Compressor compressor;
+    vOTT::Expander expander;
 
     PluginParameters parameters {*this};
 

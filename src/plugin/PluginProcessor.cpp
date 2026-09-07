@@ -110,7 +110,9 @@ void OTTAudioProcessor::changeProgramName (int index, const juce::String& newNam
 void OTTAudioProcessor::prepareToPlay (double sampleRate, int samplesPerBlock)
 {
     compressor.prepare(static_cast<int>(sampleRate));
+    expander.prepare(static_cast<int>(sampleRate));
     lowXover.prepare(static_cast<int>(sampleRate), getTotalNumOutputChannels());
+
     juce::ignoreUnused (sampleRate, samplesPerBlock);
 }
 
@@ -163,21 +165,19 @@ void OTTAudioProcessor::processBlock (juce::AudioBuffer<float>& buffer,
     compressor.setThreshold(expParams.threshold->get());
     compressor.setRatio(expParams.ratio->get());
 
-    /* while the compressor & xover are called directly from the processBlock
-     * it's probably best to individually call the update functions
-     */
-    // float attack_ = attack->get();
-    // float release_ = release->get();
-    // float threshold_ = threshold->get();
-    // float ratio_ = ratio->get();
-    // compressor.updateParams(threshold_, ratio_, attack_, release_);
+    expander.setAttack(expParams.attack->get());
+    expander.setRelease(expParams.release->get());
+    expander.setThreshold(expParams.threshold->get());
+    expander.setRatio(expParams.ratio->get());
 
     auto block = juce::dsp::AudioBlock<float>(buffer);
     auto context = juce::dsp::ProcessContextReplacing<float>(block);
 
-    lowXover.process(context);
+    // lowXover.process(context);
 
-    compressor.process(context);
+    expander.process(context);
+
+    // compressor.process(context);
 }
 
 //==============================================================================
