@@ -6,7 +6,9 @@ namespace vOTT::Utils {
 
 // this overload merges the calculation of the exponential factor & the constant
 [[nodiscard]] inline float calculateConstant(float ms, int sampleRate) noexcept {
-    return std::exp(1000.f / (ms * (float)sampleRate));
+    /*float expFactor = -1000.f / (float) sampleRate;
+    return ms < 1.0e-3f ? 0 : std::exp(expFactor / ms);*/
+    return std::exp(-1000.f / (ms * (float)sampleRate));
 }
 
 // this overload takes a pre-calculated exponential factor
