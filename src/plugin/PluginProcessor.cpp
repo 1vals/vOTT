@@ -10,7 +10,8 @@ OTTAudioProcessor::OTTAudioProcessor()
                       #endif
                        .withOutput ("Output", juce::AudioChannelSet::stereo(), true)
                      #endif
-                       )
+                       ),
+    strip1(vOTT::BandType::low)
 {
     // todo: make a function that does most of this initialization?
     compParams.attack = dynamic_cast<juce::AudioParameterFloat*>(parameters.getParameter("Low Comp Attack"));
@@ -109,13 +110,8 @@ void OTTAudioProcessor::changeProgramName (int index, const juce::String& newNam
 //==============================================================================
 void OTTAudioProcessor::prepareToPlay (double sampleRate, int samplesPerBlock)
 {
-    compressor.prepare(static_cast<int>(sampleRate));
-    compressor.forceUpdateAllParams(compParams);
-
-    expander.prepare(static_cast<int>(sampleRate));
-    expander.forceUpdateAllParams(expParams);
-
-    lowXover.prepare(static_cast<int>(sampleRate), getTotalNumOutputChannels());
+    strip1.prepare((int)sampleRate, getTotalNumOutputChannels());
+    strip1.forceUpdateAllParams(compParams, expParams);
 
     juce::ignoreUnused (sampleRate, samplesPerBlock);
 }
@@ -162,26 +158,14 @@ void OTTAudioProcessor::processBlock (juce::AudioBuffer<float>& buffer,
     for (auto i = totalNumInputChannels; i < totalNumOutputChannels; ++i)
         buffer.clear (i, 0, buffer.getNumSamples());
 
-    lowXover.setFilterFrequency(lowXoverFreq->get());
-
-    compressor.setAttack(compParams.attack->get());
-    compressor.setRelease(expParams.release->get());
-    compressor.setThreshold(expParams.threshold->get());
-    compressor.setRatio(expParams.ratio->get());
-
-    expander.setAttack(expParams.attack->get());
-    expander.setRelease(expParams.release->get());
-    expander.setThreshold(expParams.threshold->get());
-    expander.setRatio(expParams.ratio->get());
+    strip1.updateCompressorParams(compParams);
+    // strip1.updateUpwardsCompParams(expParams);
+    // strip1.setFilterFrequency(lowXoverFreq->get());
 
     auto block = juce::dsp::AudioBlock<float>(buffer);
     auto context = juce::dsp::ProcessContextReplacing<float>(block);
 
-    // lowXover.process(context);
-
-    expander.process(context);
-
-    // compressor.process(context);
+    strip1.process(context);
 }
 
 //==============================================================================

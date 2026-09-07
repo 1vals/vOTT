@@ -86,7 +86,6 @@ public:
 protected:
     Envelope envelope;
 
-    // UI parameters
     float attack;
     float release;
     float thresholdDb;
