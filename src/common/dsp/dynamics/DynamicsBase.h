@@ -20,7 +20,7 @@ public:
     DynamicsBase() = default;
     virtual ~DynamicsBase() = default;
 
-    void forceUpdateAllParams(const Dynamics::ParamPtrs& params) {
+    virtual void forceUpdateAllParams(const Dynamics::ParamPtrs& params) {
         attack = params.attack->get();
         release = params.release->get();
         envelope.setAttackTime(attack);
@@ -29,10 +29,10 @@ public:
         ratio = params.ratio->get();
         thresholdDb = params.threshold->get();
         smoothedRatio.reset(ratio);
-        smoothedThreshold.reset(thresholdDb);
+        smoothedThreshold.reset(juce::Decibels::decibelsToGain(thresholdDb, -100.f));
     }
 
-    void updateParams(float threshold_, float ratio_, float attack_, float release_) {
+    virtual void updateParams(float threshold_, float ratio_, float attack_, float release_) {
         if (attack != attack_) {
             attack = attack_;
             envelope.setAttackTime(attack);
@@ -54,13 +54,13 @@ public:
         }
     }
 
-    void setAttack(float newAttack) {
+    virtual void setAttack(float newAttack) {
         if (attack != newAttack) {
             attack = newAttack;
             envelope.setAttackTime(attack);
         }
     }
-    void setRelease(float newRelease) {
+    virtual void setRelease(float newRelease) {
         if (release != newRelease) {
             release = newRelease;
             envelope.setReleaseTime(release);
@@ -72,7 +72,7 @@ public:
         thresholdDb = newThreshold;
         smoothedThreshold.setTarget(juce::Decibels::decibelsToGain(thresholdDb, -100.f));
     }
-    virtual void setRatio(float newRatio) {
+    void setRatio(float newRatio) {
         if (ratio == newRatio)
             return;
         ratio = newRatio;
