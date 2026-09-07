@@ -1,22 +1,16 @@
 #pragma once
 
-/**
- * common/Parameters.h
- * this class serves as a wrapper for juce's AudioProcessorValueTreeState
- *
- */
-
 #include <juce_audio_processors/juce_audio_processors.h>
 
 namespace vOTT {
-class Parameters {
+class ApvtsWrapper {
 public:
     using APVTS = juce::AudioProcessorValueTreeState;
 
-    Parameters(juce::AudioProcessor& p, APVTS::ParameterLayout layout)
+    ApvtsWrapper(juce::AudioProcessor& p, APVTS::ParameterLayout layout)
         : apvts(p, nullptr, "Parameters", std::move(layout)) { }
 
-    virtual ~Parameters() = default;
+    virtual ~ApvtsWrapper() = default;
 
     virtual void replaceState(const juce::ValueTree& newState) { apvts.replaceState(newState); }
     juce::ValueTree copyState() { return apvts.copyState(); }

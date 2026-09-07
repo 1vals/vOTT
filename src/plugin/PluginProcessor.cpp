@@ -21,6 +21,9 @@ OTTAudioProcessor::OTTAudioProcessor()
     jassert (threshold != nullptr);
     ratio = dynamic_cast<juce::AudioParameterFloat*>(parameters.getParameter("Low Comp Ratio"));
     jassert (ratio != nullptr);
+
+    // todo: refactor this to use a parmeter listener, and use an atomic flag updated by parameterChanged()
+    // this will require ApvtsWrapper to be updated to support listeners and that callback
     frequency = dynamic_cast<juce::AudioParameterFloat*>(parameters.getParameter("Low Frequency"));
     jassert (frequency != nullptr);
 }
