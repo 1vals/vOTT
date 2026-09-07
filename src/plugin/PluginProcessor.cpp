@@ -151,6 +151,9 @@ void OTTAudioProcessor::processBlock (juce::AudioBuffer<float>& buffer,
     // compressor.setThreshold(threshold->get());
     // compressor.setRatio(ratio->get());
 
+    // yeah, in this case its kinda more redundant to do this
+    // when the xover / compressor are encapsulated by a BandStrip instance,
+    // this may be more feasible
     float attack_ = attack->get();
     float release_ = release->get();
     float threshold_ = threshold->get();
@@ -164,7 +167,6 @@ void OTTAudioProcessor::processBlock (juce::AudioBuffer<float>& buffer,
     lowXover.process(context);
 
     compressor.process(context);
-    // DBG("compressor.process ran");
 }
 
 //==============================================================================

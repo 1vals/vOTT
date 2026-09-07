@@ -29,7 +29,7 @@ void Compressor::process(const juce::dsp::ProcessContextReplacing<float>& contex
         }
         if (smoothedThreshold.isSmoothing()) {
             thresholdDb = smoothedThreshold.getNextValue();
-            thresholdGain = juce::Decibels::gainToDecibels(thresholdDb, -100.f);
+            // thresholdGain = juce::Decibels::gainToDecibels(thresholdDb, -100.f);
         }
 
         for (size_t channel = 0; channel < numChannels; ++channel) {

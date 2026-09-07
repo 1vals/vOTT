@@ -25,7 +25,8 @@ public:
 
         if (thresholdDb != threshold_) {
             thresholdDb = threshold_;
-            smoothedThreshold.setTargetValue(threshold_);
+            thresholdGain = juce::Decibels::decibelsToGain(thresholdDb, -100.f);
+            smoothedThreshold.setTargetValue(thresholdGain);
         }
 
         if (ratio != ratio_) {
