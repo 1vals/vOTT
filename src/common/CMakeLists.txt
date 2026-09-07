@@ -4,8 +4,8 @@ add_library(common STATIC
         dsp/dynamics/DynamicsBase.h
         dsp/dynamics/Envelope.cpp
         dsp/dynamics/Envelope.h
-        dsp/dynamics/Compressor.cpp
         dsp/dynamics/Compressor.h
+        dsp/dynamics/Expander.h
 
         dsp/filters/SecondOrderButterworth.h
         dsp/filters/LinkwitzRileyCrossover.h

@@ -1,4 +1,4 @@
-#include "../Envelope.h"
+#include "Envelope.h"
 
 namespace vOTT {
 void Envelope::prepare(int sr) {
