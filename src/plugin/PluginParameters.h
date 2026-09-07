@@ -1,6 +1,6 @@
 #pragma once
 
-#include <common/ApvtsWrapper.h>
+#include <../common/dsp/utils/ApvtsWrapper.h>
 
 /**
  * plugin/PluginParameters.h
