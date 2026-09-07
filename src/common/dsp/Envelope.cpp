@@ -2,13 +2,14 @@
 
 namespace vOTT {
 void Envelope::prepare(int sr) {
-    DBG("envelope.prepare ran");
+    // DBG("envelope.prepare ran");
     sampleRate = sr;
     expFactor = -1000.f / (float) sampleRate;
 }
 
+// refactoring this to Utils, leaving it for now
 float Envelope::calculateConstant(float ms) const noexcept {
-    // lol this could run on the audio thread and be better
+    // would this run better async, or is that redundant?
     return ms < static_cast<float>(1.0e-3) ? 0
                                            : static_cast<float>(std::exp(expFactor / ms));
 }

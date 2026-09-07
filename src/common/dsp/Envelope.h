@@ -10,6 +10,7 @@
 
 #include <juce_audio_processors/juce_audio_processors.h>
 #include <juce_dsp/juce_dsp.h>
+#include "utils/Utils.h"
 
 namespace vOTT {
 
@@ -19,11 +20,11 @@ public:
 
     void setAttackTime(float newMs) {
         attackMs = newMs;
-        constantAtk = calculateConstant(newMs);
+        constantAtk = Utils::calculateConstant(newMs, expFactor);
     }
     void setReleaseTime(float newMs) {
         releaseMs = newMs;
-        constantRls = calculateConstant(newMs);
+        constantRls = Utils::calculateConstant(newMs, expFactor);
     }
 
     void prepare(int sr);
@@ -41,13 +42,15 @@ public:
 private:
     [[nodiscard]] float calculateConstant(float ms) const noexcept;
 
-    std::vector<float> y { 2, 0 }; // as in the lowpass filter formula
+    std::vector<float> y = std::vector<float>(2, 0.f);
 
     float attackMs, constantAtk;
     float releaseMs, constantRls;
 
     int sampleRate = 44100;
-    double expFactor = -1000.f / (float)sampleRate;
+
+    // since this is set by envelope.prepare anyways, it should be uninitialized.
+    float expFactor/* = -1000.f / (float)sampleRate*/;
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(Envelope)
 };
