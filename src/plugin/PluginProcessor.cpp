@@ -33,8 +33,8 @@ OTTAudioProcessor::OTTAudioProcessor()
 
     // todo: refactor this to use a parameter listener, and use an atomic flag updated by parameterChanged()
     // this will require ApvtsWrapper to be updated to support listeners and that callback
-    frequency = dynamic_cast<juce::AudioParameterFloat*>(parameters.getParameter("Low Frequency"));
-    jassert (frequency != nullptr);
+    lowXoverFreq = dynamic_cast<juce::AudioParameterFloat*>(parameters.getParameter("Low Frequency"));
+    jassert (lowXoverFreq != nullptr);
 }
 
 OTTAudioProcessor::~OTTAudioProcessor()
@@ -162,7 +162,7 @@ void OTTAudioProcessor::processBlock (juce::AudioBuffer<float>& buffer,
     for (auto i = totalNumInputChannels; i < totalNumOutputChannels; ++i)
         buffer.clear (i, 0, buffer.getNumSamples());
 
-    lowXover.setFilterFrequency(frequency->get());
+    lowXover.setFilterFrequency(lowXoverFreq->get());
 
     compressor.setAttack(compParams.attack->get());
     compressor.setRelease(expParams.release->get());

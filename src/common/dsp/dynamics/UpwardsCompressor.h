@@ -27,13 +27,13 @@ public:
         smoothedThreshold.reset(juce::Decibels::decibelsToGain(thresholdDb, -100.f));
     }
 
-    virtual void setAttack(float newAttack) {
+    void setAttack(float newAttack) override {
         if (attack != newAttack) {
             attack = newAttack;
             envelope.setReleaseTime(attack); // set release instead of attack
         }
     }
-    virtual void setRelease(float newRelease) {
+    void setRelease(float newRelease) override {
         if (release != newRelease) {
             release = newRelease;
             envelope.setAttackTime(release); // set attack instead of release
