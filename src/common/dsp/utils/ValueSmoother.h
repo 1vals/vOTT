@@ -7,7 +7,7 @@ namespace vOTT::Utils {
 
 class ValueSmoother {
 public:
-    ValueSmoother() = default;
+    ValueSmoother(float timeMs_) : timeMs(timeMs_) { }
 
     void prepare(int sr) {
         sampleRate = sr;
@@ -34,11 +34,11 @@ public:
     }
 
     [[nodiscard]] bool isSmoothing() const {
-        return std::abs(current - target) > 0;
+        return std::abs(current - target) > 1.0e-5f;
     }
 
 private:
-    float timeMs = 30.f;
+    float timeMs;
     float coeff = 0.f;
     float current = 0.f, target = 0.f;
     int sampleRate = 44100;
