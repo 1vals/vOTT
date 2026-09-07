@@ -2,7 +2,7 @@
 
 #include <juce_audio_processors/juce_audio_processors.h>
 #include "PluginParameters.h"
-#include <common/dsp/DynamicProcessors.h>
+#include <common/dsp/dynamics/dynamics.h>
 #include <common/dsp/filters/LinkwitzRileyCrossover.h>
 
 //==============================================================================

@@ -1,10 +1,11 @@
 add_library(common STATIC
         ApvtsWrapper.h
 
-        dsp/DynamicProcessors.cpp
-        dsp/DynamicProcessors.h
-        dsp/Envelope.cpp
-        dsp/Envelope.h
+        dsp/dynamics/DynamicsBase.h
+        dsp/dynamics/Envelope.cpp
+        dsp/dynamics/Envelope.h
+        dsp/dynamics/Compressor.cpp
+        dsp/dynamics/Compressor.h
 
         dsp/filters/SecondOrderButterworth.h
         dsp/filters/LinkwitzRileyCrossover.h

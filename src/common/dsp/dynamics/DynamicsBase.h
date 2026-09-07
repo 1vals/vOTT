@@ -2,14 +2,14 @@
 
 #include <juce_dsp/juce_dsp.h>
 #include "Envelope.h"
-#include "utils/ValueSmoother.h"
+#include "../utils/ValueSmoother.h"
 
 namespace vOTT {
 
-class DynamicProcessor {
+class DynamicsBase {
 public:
-    virtual ~DynamicProcessor() = default;
-    DynamicProcessor() = default;
+    virtual ~DynamicsBase() = default;
+    DynamicsBase() = default;
 
     void updateParams(float threshold_, float ratio_, float attack_, float release_) {
         if (attack != attack_) {
@@ -90,14 +90,6 @@ protected:
     Utils::ValueSmoother smoothedRatio = Utils::ValueSmoother(5.f);
     Utils::ValueSmoother smoothedThreshold = Utils::ValueSmoother(5.f);
 
-    JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(DynamicProcessor)
-};
-
-class Compressor : public DynamicProcessor {
-public:
-    virtual ~Compressor() = default;
-
-    void process(const juce::dsp::ProcessContextReplacing<float>& context) override;
-    float processSample(int channel, float inputValue, float threshold_, float ratio_) override;
+    JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(DynamicsBase)
 };
 } // vOTT
