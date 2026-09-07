@@ -5,7 +5,7 @@
 namespace vOTT {
 class Compressor : public DynamicsBase {
 public:
-    virtual ~Compressor() = default;
+    ~Compressor() override = default;
 
     void process(const juce::dsp::ProcessContextReplacing<float>& context) override {
         const auto& inputBlock = context.getInputBlock();

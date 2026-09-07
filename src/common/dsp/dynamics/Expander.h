@@ -11,7 +11,7 @@ namespace vOTT {
 
 class Expander : public DynamicsBase {
 public:
-    virtual ~Expander() = default;
+    ~Expander() override = default;
 
     void process(const juce::dsp::ProcessContextReplacing<float>& context) override {
         const auto& inputBlock = context.getInputBlock();
@@ -45,8 +45,11 @@ public:
     float processSample(int channel, float inputValue, float threshold_, float ratio_) override {
         auto env = envelope.processSample(channel, inputValue);
 
-        auto gain = (env < threshold_) ? 1.f
-                                               : std::pow(env * (1 / threshold_), (1 / ratio_) - 1.f);
+        // todo: small micro optimization, 1 / threshold can be stored & only calculated when threshold changes
+        auto gain = (env > threshold_) ? 1.f
+                                            : std::pow(env * (1 / threshold_), (/*1 / */ratio_) - 1.f);
+
+        DBG("env: " << env << ", gain: " << gain);
 
         return gain * inputValue;
     }

@@ -81,10 +81,10 @@ protected:
     Envelope envelope;
 
     // UI parameters
-    float attack = 50.f;
-    float release = 250.f;
-    float thresholdDb = 0.f;
-    float ratio = 4.f;
+    float attack;
+    float release;
+    float thresholdDb;
+    float ratio;
     int sampleRate = 44100;
 
     Utils::ValueSmoother smoothedRatio = Utils::ValueSmoother(5.f);
