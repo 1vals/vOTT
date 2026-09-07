@@ -11,10 +11,6 @@ struct SecondOrderButterworth {
             highpass
         };
 
-        // SecondOrderButterworth(FilterType type) {
-        //     filterType = type;
-        // }
-
         void setFilterType(FilterType newType) {
             filterType = newType;
             updateCoefficients();
@@ -44,13 +40,8 @@ struct SecondOrderButterworth {
                 auto inputSamples = inputBlock.getChannelPointer(channel);
                 auto outputSamples = outputBlock.getChannelPointer(channel);
 
-                for (size_t i = 0; i < outputBlock.getNumSamples(); ++i) {
-                    // DBG("value for input sample " << i << " is " << inputSamples[i]);
+                for (size_t i = 0; i < outputBlock.getNumSamples(); ++i)
                     outputSamples[i] = processSample((int) channel, inputSamples[i]);
-                    // DBG("value for output sample " << i << " is " << outputSamples[i]);
-
-                }
-
             }
         }
 
@@ -91,7 +82,6 @@ struct SecondOrderButterworth {
         };
 
         void updateCoefficients() {
-            DBG("updateCoefficients() ran");
             omega0 = (juce::MathConstants<float>::twoPi * centerFreq) / (float)sampleRate;
             alpha = (std::sin(omega0)) / (2.f * Q);
 
@@ -106,7 +96,6 @@ struct SecondOrderButterworth {
         }
 
         void calculateLPCoeffs() {
-            DBG("calculateLPCoeffs() ran");
             float cosW0 = std::cos(omega0);
 
             float rawB1 = 1 - cosW0;
@@ -121,7 +110,6 @@ struct SecondOrderButterworth {
         }
 
         void calculateHPCoeffs() {
-            DBG("calculateHPCoeffs() ran");
             float cosW0 = std::cos(omega0);
 
             float rawB0 = (1 + cosW0) / 2;
@@ -142,9 +130,6 @@ struct SecondOrderButterworth {
             b2 = rb2 / ra0;
             a1 = ra1 / ra0;
             a2 = ra2 / ra0;
-            // DBG("b0: " << b0 << "b1: " << b1 << "b2: " << b2 <<
-            //     "a1: " << a1 << "a2: " << a2);
-            DBG("normalize() ran");
         }
 
         float b0, b1, b2;

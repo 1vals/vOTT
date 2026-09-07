@@ -2,17 +2,16 @@
 
 #include <juce_dsp/juce_dsp.h>
 #include "Envelope.h"
+#include "utils/ValueSmoother.h"
 
 namespace vOTT {
 
 class DynamicProcessor {
 public:
+    virtual ~DynamicProcessor() = default;
     DynamicProcessor() = default;
 
     void updateParams(float threshold_, float ratio_, float attack_, float release_) {
-        /**
-         * literally does all the same stuff as the update functions just in one function
-         */
         if (attack != attack_) {
             attack = attack_;
             envelope.setAttackTime(attack);
@@ -23,16 +22,14 @@ public:
             envelope.setReleaseTime(release);
         }
 
-        // DBG("current threshold in db " << thresholdDb);
         if (thresholdDb != threshold_) {
             thresholdDb = threshold_;
-            thresholdGain = juce::Decibels::decibelsToGain(thresholdDb, -100.f);
-            smoothedThreshold.setTargetValue(thresholdGain);
+            smoothedThreshold.setTarget(juce::Decibels::decibelsToGain(threshold_, -100.f));
         }
 
         if (ratio != ratio_) {
             ratio = ratio_;
-            smoothedRatio.setTargetValue(ratio_);
+            smoothedRatio.setTarget(ratio_);
         }
     }
 
@@ -49,18 +46,26 @@ public:
         }
     }
     void setThreshold(float newThreshold) {
+        if (thresholdDb == newThreshold)
+            return;
         thresholdDb = newThreshold;
-        thresholdGain = juce::Decibels::decibelsToGain(thresholdDb, -100.f);
-        smoothedThreshold.setTargetValue(thresholdGain);
+        smoothedThreshold.setTarget(juce::Decibels::decibelsToGain(thresholdDb, -100.f));
     }
     virtual void setRatio(float newRatio) {
+        if (ratio == newRatio)
+            return;
         ratio = newRatio;
-        smoothedRatio.setTargetValue(newRatio);
+        smoothedRatio.setTarget(newRatio);
     }
 
     void prepare(int sr) {
         sampleRate = sr;
-        thresholdGain = juce::Decibels::decibelsToGain(thresholdDb, -100.f);
+
+        smoothedThreshold.prepare(sr);
+        smoothedThreshold.reset(juce::Decibels::decibelsToGain(thresholdDb, -100.f));
+
+        smoothedRatio.prepare(sr);
+        smoothedRatio.reset(ratio);
 
         envelope.prepare(sr);
         envelope.setAttackTime(attack);
@@ -70,27 +75,22 @@ public:
     }
 
     virtual void process(const juce::dsp::ProcessContextReplacing<float>& context) = 0;
-    virtual float processSample(int channel, float inputValue) = 0;
+    virtual float processSample(int channel, float inputValue, float threshold_, float ratio_) = 0;
 
 protected:
     Envelope envelope;
 
     // UI parameters
-    float attack;
-    float release;
-    float thresholdDb;
-    float ratio;
-
-    juce::SmoothedValue<float, juce::ValueSmoothingTypes::Linear> smoothedRatio;
-    juce::SmoothedValue<float, juce::ValueSmoothingTypes::Multiplicative> smoothedThreshold;
-
-    // the threshold used in dsp math
-    float thresholdGain;
-
-    // audio environment specs
+    float attack = 50.f;
+    float release = 250.f;
+    float thresholdDb = 0.f;
+    float ratio = 4.f;
     int sampleRate = 44100;
 
-    JUCE_LEAK_DETECTOR(DynamicProcessor)
+    Utils::ValueSmoother smoothedRatio = Utils::ValueSmoother(5.f);
+    Utils::ValueSmoother smoothedThreshold = Utils::ValueSmoother(5.f);
+
+    JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(DynamicProcessor)
 };
 
 class Compressor : public DynamicProcessor {
@@ -98,6 +98,6 @@ public:
     virtual ~Compressor() = default;
 
     void process(const juce::dsp::ProcessContextReplacing<float>& context) override;
-    float processSample(int channel, float inputValue) override;
+    float processSample(int channel, float inputValue, float threshold_, float ratio_) override;
 };
 } // vOTT

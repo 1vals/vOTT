@@ -33,8 +33,12 @@ public:
         return current;
     }
 
+    float getCurrentValue() {
+        return current;
+    }
+
     [[nodiscard]] bool isSmoothing() const {
-        return std::abs(current - target) > 1.0e-5f;
+        return std::abs(current - target) > 1.0e-3f;
     }
 
 private:
