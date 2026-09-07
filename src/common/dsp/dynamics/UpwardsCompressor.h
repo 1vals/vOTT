@@ -9,9 +9,9 @@
  */
 namespace vOTT {
 
-class Expander : public DynamicsBase {
+class UpwardsCompressor : public DynamicsBase {
 public:
-    ~Expander() override = default;
+    ~UpwardsCompressor() override = default;
 
     void process(const juce::dsp::ProcessContextReplacing<float>& context) override {
         const auto& inputBlock = context.getInputBlock();
@@ -47,9 +47,7 @@ public:
 
         // todo: small micro optimization, 1 / threshold can be stored & only calculated when threshold changes
         auto gain = (env > threshold_) ? 1.f
-                                            : std::pow(env * (1 / threshold_), (/*1 / */ratio_) - 1.f);
-
-        DBG("env: " << env << ", gain: " << gain);
+                                            : std::pow(env * (1 / threshold_), (1 / ratio_) - 1.f);
 
         return gain * inputValue;
     }

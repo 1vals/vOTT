@@ -5,7 +5,7 @@ add_library(dsp STATIC
         dynamics/DynamicsBase.h
         dynamics/Envelope.h
         dynamics/Envelope.cpp
-        dynamics/Expander.h
+        dynamics/UpwardsCompressor.h
 
         filters/SecondOrderButterworth.h
 
