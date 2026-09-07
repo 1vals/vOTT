@@ -146,10 +146,17 @@ void OTTAudioProcessor::processBlock (juce::AudioBuffer<float>& buffer,
 
     lowXover.setFilterFrequency(frequency->get());
 
-    compressor.setAttack(attack->get());
-    compressor.setRelease(release->get());
-    compressor.setThreshold(threshold->get());
-    compressor.setRatio(ratio->get());
+    // compressor.setAttack(attack->get());
+    // compressor.setRelease(release->get());
+    // compressor.setThreshold(threshold->get());
+    // compressor.setRatio(ratio->get());
+
+    float attack_ = attack->get();
+    float release_ = release->get();
+    float threshold_ = threshold->get();
+    float ratio_ = ratio->get();
+
+    compressor.updateParams(threshold_, ratio_, attack_, release_);
 
     auto block = juce::dsp::AudioBlock<float>(buffer);
     auto context = juce::dsp::ProcessContextReplacing<float>(block);

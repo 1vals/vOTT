@@ -9,6 +9,31 @@ class DynamicProcessor {
 public:
     DynamicProcessor() = default;
 
+    void updateParams(float threshold_, float ratio_, float attack_, float release_) {
+        /**
+         * literally does all the same stuff as the update functions just in one function
+         */
+        if (attack != attack_) {
+            attack = attack_;
+            envelope.setAttackTime(attack);
+        }
+
+        if (release != release_) {
+            release = release_;
+            envelope.setReleaseTime(release);
+        }
+
+        if (thresholdDb != threshold_) {
+            thresholdDb = threshold_;
+            smoothedThreshold.setTargetValue(threshold_);
+        }
+
+        if (ratio != ratio_) {
+            ratio = ratio_;
+            smoothedRatio.setTargetValue(ratio_);
+        }
+    }
+
     void setAttack(float newAttack) {
         if (attack != newAttack) {
             attack = newAttack;
