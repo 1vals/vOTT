@@ -3,17 +3,6 @@
 #include <juce_dsp/juce_dsp.h>
 #include "Envelope.h"
 
-/**
- * im debating whether to create these as two independent classes or have them both derive from a base class.
- * since theyre both so similar, but need to process in serial, creating an abstract base class seems better
- *
- * planning:
- *
- * what we need:
- * functions that update each parameter
- * a function which processes audio
- *
- */
 namespace vOTT {
 
 class DynamicProcessor {
@@ -21,12 +10,16 @@ public:
     DynamicProcessor() = default;
 
     void setAttack(float newAttack) {
-        attack = newAttack;
-        envelope.setAttackTime(attack);
+        if (attack != newAttack) {
+            attack = newAttack;
+            envelope.setAttackTime(attack);
+        }
     }
     void setRelease(float newRelease) {
-        release = newRelease;
-        envelope.setReleaseTime(release);
+        if (release != newRelease) {
+            release = newRelease;
+            envelope.setReleaseTime(release);
+        }
     }
     void setThreshold(float newThreshold) {
         smoothedThreshold.setTargetValue(newThreshold);
