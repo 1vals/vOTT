@@ -55,10 +55,16 @@ private:
     juce::AudioParameterFloat* frequency { nullptr };
     float lastFrequency;
 
-    juce::AudioParameterFloat* attack { nullptr };
-    juce::AudioParameterFloat* release { nullptr };
-    juce::AudioParameterFloat* threshold { nullptr };
-    juce::AudioParameterFloat* ratio { nullptr };
+    struct DynamicsParameters {
+        juce::AudioParameterFloat* attack { nullptr };
+        juce::AudioParameterFloat* release { nullptr };
+        juce::AudioParameterFloat* threshold { nullptr };
+        juce::AudioParameterFloat* ratio { nullptr };
+    };
+
+    // when multiple bands are added, these can be converted into vectors
+    DynamicsParameters compParams;
+    DynamicsParameters expParams;
 
     //==============================================================================
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (OTTAudioProcessor)
