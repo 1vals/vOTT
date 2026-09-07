@@ -27,7 +27,7 @@ target_sources(V_OTT
         PluginEditor.h
         PluginProcessor.cpp
         PluginProcessor.h
-        Pluginparameters.h)
+        PluginParameters.h)
 
 target_compile_definitions(V_OTT
     PUBLIC
@@ -39,6 +39,7 @@ target_compile_definitions(V_OTT
 target_link_libraries(V_OTT
     PRIVATE
         common
+        dsp
         juce::juce_dsp
         juce::juce_audio_utils
     PUBLIC

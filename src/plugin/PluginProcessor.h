@@ -2,7 +2,7 @@
 
 #include <juce_audio_processors/juce_audio_processors.h>
 #include "PluginParameters.h"
-#include <common/dsp/DynamicProcessors.h>
+#include <dsp/dsp.h>
 #include <common/dsp/filters/LinkwitzRileyCrossover.h>
 
 //==============================================================================
@@ -49,16 +49,15 @@ private:
     // vOTT::Filters::LinkwitzRileyCrossover lowXover;
     vOTT::Filters::SecondOrderButterworth lowXover;
     vOTT::Compressor compressor;
+    vOTT::UpwardsCompressor expander;
 
     PluginParameters parameters {*this};
 
     juce::AudioParameterFloat* frequency { nullptr };
     float lastFrequency;
 
-    juce::AudioParameterFloat* attack { nullptr };
-    juce::AudioParameterFloat* release { nullptr };
-    juce::AudioParameterFloat* threshold { nullptr };
-    juce::AudioParameterFloat* ratio { nullptr };
+    vOTT::Dynamics::ParamPtrs expParams;
+    vOTT::Dynamics::ParamPtrs compParams;
 
     //==============================================================================
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (OTTAudioProcessor)

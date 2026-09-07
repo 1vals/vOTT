@@ -12,17 +12,26 @@ OTTAudioProcessor::OTTAudioProcessor()
                      #endif
                        )
 {
+    // todo: make a function that does most of this initialization?
+    compParams.attack = dynamic_cast<juce::AudioParameterFloat*>(parameters.getParameter("Low Comp Attack"));
+    jassert (compParams.attack != nullptr);
+    compParams.release = dynamic_cast<juce::AudioParameterFloat*>(parameters.getParameter("Low Comp Release"));
+    jassert (compParams.release != nullptr);
+    compParams.threshold = dynamic_cast<juce::AudioParameterFloat*>(parameters.getParameter("Low Comp Threshold"));
+    jassert (compParams.threshold != nullptr);
+    compParams.ratio = dynamic_cast<juce::AudioParameterFloat*>(parameters.getParameter("Low Comp Ratio"));
+    jassert (compParams.ratio != nullptr);
 
-    attack = dynamic_cast<juce::AudioParameterFloat*>(parameters.getParameter("Low Comp Attack"));
-    jassert (attack != nullptr);
-    release = dynamic_cast<juce::AudioParameterFloat*>(parameters.getParameter("Low Comp Release"));
-    jassert (release != nullptr);
-    threshold = dynamic_cast<juce::AudioParameterFloat*>(parameters.getParameter("Low Comp Threshold"));
-    jassert (threshold != nullptr);
-    ratio = dynamic_cast<juce::AudioParameterFloat*>(parameters.getParameter("Low Comp Ratio"));
-    jassert (ratio != nullptr);
+    expParams.attack = dynamic_cast<juce::AudioParameterFloat*>(parameters.getParameter("Low Exp Attack"));
+    jassert (expParams.attack != nullptr);
+    expParams.release = dynamic_cast<juce::AudioParameterFloat*>(parameters.getParameter("Low Exp Release"));
+    jassert (expParams.release != nullptr);
+    expParams.threshold = dynamic_cast<juce::AudioParameterFloat*>(parameters.getParameter("Low Exp Threshold"));
+    jassert (expParams.threshold != nullptr);
+    expParams.ratio = dynamic_cast<juce::AudioParameterFloat*>(parameters.getParameter("Low Exp Ratio"));
+    jassert (expParams.ratio != nullptr);
 
-    // todo: refactor this to use a parmeter listener, and use an atomic flag updated by parameterChanged()
+    // todo: refactor this to use a parameter listener, and use an atomic flag updated by parameterChanged()
     // this will require ApvtsWrapper to be updated to support listeners and that callback
     frequency = dynamic_cast<juce::AudioParameterFloat*>(parameters.getParameter("Low Frequency"));
     jassert (frequency != nullptr);
@@ -101,7 +110,13 @@ void OTTAudioProcessor::changeProgramName (int index, const juce::String& newNam
 void OTTAudioProcessor::prepareToPlay (double sampleRate, int samplesPerBlock)
 {
     compressor.prepare(static_cast<int>(sampleRate));
+    compressor.forceUpdateAllParams(compParams);
+
+    expander.prepare(static_cast<int>(sampleRate));
+    expander.forceUpdateAllParams(expParams);
+
     lowXover.prepare(static_cast<int>(sampleRate), getTotalNumOutputChannels());
+
     juce::ignoreUnused (sampleRate, samplesPerBlock);
 }
 
@@ -149,26 +164,24 @@ void OTTAudioProcessor::processBlock (juce::AudioBuffer<float>& buffer,
 
     lowXover.setFilterFrequency(frequency->get());
 
-    compressor.setAttack(attack->get());
-    compressor.setRelease(release->get());
-    compressor.setThreshold(threshold->get());
-    compressor.setRatio(ratio->get());
+    compressor.setAttack(compParams.attack->get());
+    compressor.setRelease(expParams.release->get());
+    compressor.setThreshold(expParams.threshold->get());
+    compressor.setRatio(expParams.ratio->get());
 
-    /* while the compressor & xover are called directly from the processBlock
-     * it's probably best to individually call the update functions
-     */
-    // float attack_ = attack->get();
-    // float release_ = release->get();
-    // float threshold_ = threshold->get();
-    // float ratio_ = ratio->get();
-    // compressor.updateParams(threshold_, ratio_, attack_, release_);
+    expander.setAttack(expParams.attack->get());
+    expander.setRelease(expParams.release->get());
+    expander.setThreshold(expParams.threshold->get());
+    expander.setRatio(expParams.ratio->get());
 
     auto block = juce::dsp::AudioBlock<float>(buffer);
     auto context = juce::dsp::ProcessContextReplacing<float>(block);
 
-    lowXover.process(context);
+    // lowXover.process(context);
 
-    compressor.process(context);
+    expander.process(context);
+
+    // compressor.process(context);
 }
 
 //==============================================================================

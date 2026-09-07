@@ -1,6 +1,6 @@
 #pragma once
 
-#include <../common/dsp/utils/ApvtsWrapper.h>
+#include <common/ApvtsWrapper.h>
 
 /**
  * plugin/PluginParameters.h
@@ -43,6 +43,24 @@ private:
                                                             "Low Compressor Ratio",
                                                             NormalisableRange<float>(1.f, 100.f, 0.5f, 0.5),
                                                             4));
+
+        // parameters for the first expander
+        layout.add(std::make_unique<AudioParameterFloat>(ParameterID("Low Exp Threshold", 1),
+                                                          "Low Expander Threshold",
+                                                          NormalisableRange<float>(-60.f, 12.f, 0.5f),
+                                                          -40.f));
+        layout.add(std::make_unique<AudioParameterFloat>(ParameterID("Low Exp Attack", 1),
+                                                            "Low Expander Attack",
+                                                            atkRlsRange,
+                                                            50));
+        layout.add(std::make_unique<AudioParameterFloat>(ParameterID("Low Exp Release", 1),
+                                                            "Low Expander Release",
+                                                            atkRlsRange,
+                                                            250));
+        layout.add(std::make_unique<AudioParameterFloat>(ParameterID("Low Exp Ratio", 1),
+                                                            "Low Expander Ratio",
+                                                            NormalisableRange<float>(1.f, 100.f, 0.5f, 0.5),
+                                                            2.5f));
 
         return layout;
 

@@ -10,7 +10,7 @@
 
 #include <juce_audio_processors/juce_audio_processors.h>
 #include <juce_dsp/juce_dsp.h>
-#include "utils/Utils.h"
+#include "../utils/Utils.h"
 
 namespace vOTT {
 

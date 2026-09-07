@@ -2,16 +2,37 @@
 
 #include <juce_dsp/juce_dsp.h>
 #include "Envelope.h"
-#include "utils/ValueSmoother.h"
+#include "../utils/ValueSmoother.h"
 
 namespace vOTT {
 
-class DynamicProcessor {
-public:
-    virtual ~DynamicProcessor() = default;
-    DynamicProcessor() = default;
+namespace Dynamics {
+    struct ParamPtrs {
+        juce::AudioParameterFloat* attack { nullptr };
+        juce::AudioParameterFloat* release { nullptr };
+        juce::AudioParameterFloat* threshold { nullptr };
+        juce::AudioParameterFloat* ratio { nullptr };
+    };
+}
 
-    void updateParams(float threshold_, float ratio_, float attack_, float release_) {
+class DynamicsBase {
+public:
+    DynamicsBase() = default;
+    virtual ~DynamicsBase() = default;
+
+    virtual void forceUpdateAllParams(const Dynamics::ParamPtrs& params) {
+        attack = params.attack->get();
+        release = params.release->get();
+        envelope.setAttackTime(attack);
+        envelope.setReleaseTime(release);
+
+        ratio = params.ratio->get();
+        thresholdDb = params.threshold->get();
+        smoothedRatio.reset(ratio);
+        smoothedThreshold.reset(juce::Decibels::decibelsToGain(thresholdDb, -100.f));
+    }
+
+    virtual void updateParams(float threshold_, float ratio_, float attack_, float release_) {
         if (attack != attack_) {
             attack = attack_;
             envelope.setAttackTime(attack);
@@ -33,13 +54,13 @@ public:
         }
     }
 
-    void setAttack(float newAttack) {
+    virtual void setAttack(float newAttack) {
         if (attack != newAttack) {
             attack = newAttack;
             envelope.setAttackTime(attack);
         }
     }
-    void setRelease(float newRelease) {
+    virtual void setRelease(float newRelease) {
         if (release != newRelease) {
             release = newRelease;
             envelope.setReleaseTime(release);
@@ -51,7 +72,7 @@ public:
         thresholdDb = newThreshold;
         smoothedThreshold.setTarget(juce::Decibels::decibelsToGain(thresholdDb, -100.f));
     }
-    virtual void setRatio(float newRatio) {
+    void setRatio(float newRatio) {
         if (ratio == newRatio)
             return;
         ratio = newRatio;
@@ -81,23 +102,15 @@ protected:
     Envelope envelope;
 
     // UI parameters
-    float attack = 50.f;
-    float release = 250.f;
-    float thresholdDb = 0.f;
-    float ratio = 4.f;
+    float attack;
+    float release;
+    float thresholdDb;
+    float ratio;
     int sampleRate = 44100;
 
     Utils::ValueSmoother smoothedRatio = Utils::ValueSmoother(5.f);
     Utils::ValueSmoother smoothedThreshold = Utils::ValueSmoother(5.f);
 
-    JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(DynamicProcessor)
-};
-
-class Compressor : public DynamicProcessor {
-public:
-    virtual ~Compressor() = default;
-
-    void process(const juce::dsp::ProcessContextReplacing<float>& context) override;
-    float processSample(int channel, float inputValue, float threshold_, float ratio_) override;
+    JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(DynamicsBase)
 };
 } // vOTT
