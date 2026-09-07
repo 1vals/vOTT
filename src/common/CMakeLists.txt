@@ -8,6 +8,7 @@ add_library(common STATIC
 
     dsp/filters/SecondOrderButterworth.h
     dsp/filters/LinkwitzRileyCrossover.h
+        dsp/utils/Utils.h
 )
 
 target_link_libraries(common PRIVATE
