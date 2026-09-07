@@ -45,9 +45,9 @@ struct SecondOrderButterworth {
                 auto outputSamples = outputBlock.getChannelPointer(channel);
 
                 for (size_t i = 0; i < outputBlock.getNumSamples(); ++i) {
-                    DBG("value for input sample " << i << " is " << inputSamples[i]);
+                    // DBG("value for input sample " << i << " is " << inputSamples[i]);
                     outputSamples[i] = processSample((int) channel, inputSamples[i]);
-                    DBG("value for output sample " << i << " is " << outputSamples[i]);
+                    // DBG("value for output sample " << i << " is " << outputSamples[i]);
 
                 }
 

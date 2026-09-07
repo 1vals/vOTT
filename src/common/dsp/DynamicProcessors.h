@@ -23,6 +23,7 @@ public:
             envelope.setReleaseTime(release);
         }
 
+        // DBG("current threshold in db " << thresholdDb);
         if (thresholdDb != threshold_) {
             thresholdDb = threshold_;
             thresholdGain = juce::Decibels::decibelsToGain(thresholdDb, -100.f);
@@ -48,9 +49,12 @@ public:
         }
     }
     void setThreshold(float newThreshold) {
-        smoothedThreshold.setTargetValue(newThreshold);
+        thresholdDb = newThreshold;
+        thresholdGain = juce::Decibels::decibelsToGain(thresholdDb, -100.f);
+        smoothedThreshold.setTargetValue(thresholdGain);
     }
     virtual void setRatio(float newRatio) {
+        ratio = newRatio;
         smoothedRatio.setTargetValue(newRatio);
     }
 
@@ -77,7 +81,8 @@ protected:
     float thresholdDb;
     float ratio;
 
-    juce::SmoothedValue<float> smoothedRatio, smoothedThreshold;
+    juce::SmoothedValue<float, juce::ValueSmoothingTypes::Linear> smoothedRatio;
+    juce::SmoothedValue<float, juce::ValueSmoothingTypes::Multiplicative> smoothedThreshold;
 
     // the threshold used in dsp math
     float thresholdGain;
