@@ -4,7 +4,7 @@ namespace vOTT {
 
 void BandStrip::prepare(int sampleRate, int numChannels) {
     compressor.prepare(sampleRate);
-    // upwardsCompressor.prepare(sampleRate);
+    upwardsCompressor.prepare(sampleRate);
     //
     // switch (bandType) {
     //     xovers.resize(2);
@@ -30,20 +30,20 @@ void BandStrip::prepare(int sampleRate, int numChannels) {
 
 void BandStrip::process(const juce::dsp::ProcessContextReplacing<float>& context) {
     /** Roadmap:
-     * get compressor to work
+     * get compressor to work DONE
      * get upwards comp to work
      * get xover to work
      * test xover in all 3 states
+     * create bypass params for each 
      * create new xover instances so that the whole crossover thing can be done
      */
 
     // for (auto& x : xovers)
     //     x.process(context);
-    //
-    // upwardsCompressor.process(context);
-    //
-    compressor.process(context);
 
+    upwardsCompressor.process(context);
+
+    compressor.process(context);
 }
 
 } // vOTT

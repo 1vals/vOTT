@@ -159,7 +159,7 @@ void OTTAudioProcessor::processBlock (juce::AudioBuffer<float>& buffer,
         buffer.clear (i, 0, buffer.getNumSamples());
 
     strip1.updateCompressorParams(compParams);
-    // strip1.updateUpwardsCompParams(expParams);
+    strip1.updateUpwardsCompParams(expParams);
     // strip1.setFilterFrequency(lowXoverFreq->get());
 
     auto block = juce::dsp::AudioBlock<float>(buffer);

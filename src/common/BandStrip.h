@@ -28,7 +28,6 @@ public:
             x.setFilterFrequency(newFreq);
     }
     void updateCompressorParams(const Dynamics::ParamPtrs& params) {
-        //DBG("updateCompressorParams() ran");
         compressor.updateParams(params);
     }
     void updateUpwardsCompParams(const Dynamics::ParamPtrs& params) {

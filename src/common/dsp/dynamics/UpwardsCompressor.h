@@ -75,6 +75,10 @@ public:
         auto gain = (env > threshold_) ? 1.f
                                             : std::pow(env * (1 / threshold_), (1 / ratio_) - 1.f);
 
+        float output = gain * inputValue;
+        DBG("env = " << env << ", threshold = " << threshold_ << ", gain = " << gain <<
+            ", output value = " << output);
+
         return gain * inputValue;
     }
 };
