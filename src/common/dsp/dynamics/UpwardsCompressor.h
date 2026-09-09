@@ -13,7 +13,7 @@ class UpwardsCompressor : public DynamicsBase {
 public:
     ~UpwardsCompressor() override = default;
 
-    void forceUpdateAllParams(const Dynamics::ParamPtrs& params) override {
+    void forceUpdateAllParams(const State::CompressorParams& params) override {
         // make attack = release and vice versa to have the parameters resemble their effect on the sound more
         // realistically;
         attack = params.release->get();

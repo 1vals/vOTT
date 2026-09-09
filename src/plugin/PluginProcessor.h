@@ -56,8 +56,10 @@ private:
     juce::AudioParameterFloat* lowXoverFreq { nullptr };
     float lastFrequency;
 
-    vOTT::Dynamics::ParamPtrs expParams;
-    vOTT::Dynamics::ParamPtrs compParams;
+    // vOTT::State::CompressorParams expParams;
+    // vOTT::State::CompressorParams compParams;
+
+    vOTT::State::BandState lowBandState;
 
     //==============================================================================
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (OTTAudioProcessor)

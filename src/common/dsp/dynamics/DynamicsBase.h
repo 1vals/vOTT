@@ -6,8 +6,8 @@
 
 namespace vOTT {
 
-namespace Dynamics {
-    struct ParamPtrs {
+namespace State {
+    struct CompressorParams {
         juce::AudioParameterFloat* attack { nullptr };
         juce::AudioParameterFloat* release { nullptr };
         juce::AudioParameterFloat* threshold { nullptr };
@@ -20,7 +20,7 @@ public:
     DynamicsBase() = default;
     virtual ~DynamicsBase() = default;
 
-    virtual void forceUpdateAllParams(const Dynamics::ParamPtrs& params) {
+    virtual void forceUpdateAllParams(const State::CompressorParams& params) {
         attack = params.attack->get();
         release = params.release->get();
         envelope.setAttackTime(attack);
@@ -32,7 +32,7 @@ public:
         smoothedThreshold.reset(juce::Decibels::decibelsToGain(thresholdDb, -100.f));
     }
 
-    virtual void updateParams(const Dynamics::ParamPtrs& params) {
+    virtual void updateParams(const State::CompressorParams& params) {
         setAttack(params.attack->get());
         setRelease(params.release->get());
         setThreshold(params.threshold->get());

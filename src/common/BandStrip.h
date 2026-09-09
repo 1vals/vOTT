@@ -9,6 +9,14 @@
  */
 namespace vOTT {
 
+namespace State {
+    struct BandState {
+        CompressorParams compParams;
+        CompressorParams upwdCompParams;
+        juce::AudioProcessorParameter* frequency;
+    };
+} // state
+
     enum BandType {
         low,
         mid,
@@ -27,17 +35,24 @@ public:
         for (auto& x : filters)
             x.setFilterFrequency(newFreq);
     }
-    void updateCompressorParams(const Dynamics::ParamPtrs& params) {
+    void updateCompressorParams(const State::CompressorParams& params) {
         compressor.updateParams(params);
     }
-    void updateUpwardsCompParams(const Dynamics::ParamPtrs& params) {
+    void updateUpwardsCompParams(const State::CompressorParams& params) {
         upwardsCompressor.updateParams(params);
     }
-    void forceUpdateCompParams(const Dynamics::ParamPtrs& compParams,
-                              const Dynamics::ParamPtrs& upwdCompParams //,
+    void forceUpdateCompParams(const State::CompressorParams& compParams,
+                              const State::CompressorParams& upwdCompParams //,
                               /*const float& frequency*/) {
         compressor.forceUpdateAllParams(compParams);
         upwardsCompressor.forceUpdateAllParams(upwdCompParams);
+    }
+
+    void updateParamsFromState(const State::BandState& state) {
+        for (auto& filter : filters)
+            filter.setFilterFrequency(state.frequency);
+        upwardsCompressor.updateParams(state.upwdCompParams);
+        compressor.updateParams(state.compParams);
     }
 
     void process(const juce::dsp::ProcessContextReplacing<float>& context);
