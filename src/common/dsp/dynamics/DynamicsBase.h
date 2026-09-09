@@ -21,6 +21,8 @@ public:
     virtual ~DynamicsBase() = default;
 
     virtual void forceUpdateAllParams(const State::CompressorParams& params) {
+        // this is called after prepare() because smoothed values would be uninitialized on plugin init,
+        // causing no audio to play until after the smoothed params were changed
         attack = params.attack->get();
         release = params.release->get();
         envelope.setAttackTime(attack);

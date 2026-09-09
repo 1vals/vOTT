@@ -45,19 +45,9 @@ public:
     void setStateInformation (const void* data, int sizeInBytes) override;
 
 private:
-    // vOTT::Filters::SecondOrderButterworth lowXover;
-    // vOTT::Compressor compressor;
-    // vOTT::UpwardsCompressor expander;
-
     vOTT::BandStrip strip1;
 
     PluginParameters parameters {*this};
-
-    juce::AudioParameterFloat* lowXoverFreq { nullptr };
-    float lastFrequency;
-
-    // vOTT::State::CompressorParams expParams;
-    // vOTT::State::CompressorParams compParams;
 
     vOTT::State::BandState lowBandState;
 

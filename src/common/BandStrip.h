@@ -13,7 +13,7 @@ namespace State {
     struct BandState {
         CompressorParams compParams;
         CompressorParams upwdCompParams;
-        juce::AudioProcessorParameter* frequency;
+        juce::AudioProcessorParameter* frequency { nullptr };
     };
 } // state
 
@@ -41,16 +41,15 @@ public:
     void updateUpwardsCompParams(const State::CompressorParams& params) {
         upwardsCompressor.updateParams(params);
     }
-    void forceUpdateCompParams(const State::CompressorParams& compParams,
-                              const State::CompressorParams& upwdCompParams //,
-                              /*const float& frequency*/) {
-        compressor.forceUpdateAllParams(compParams);
-        upwardsCompressor.forceUpdateAllParams(upwdCompParams);
+    void forceUpdateCompParams(const State::BandState& state) {
+        compressor.forceUpdateAllParams(state.compParams);
+        upwardsCompressor.forceUpdateAllParams(state.upwdCompParams);
     }
 
     void updateParamsFromState(const State::BandState& state) {
+        float freq = state.frequency->getValue();
         for (auto& filter : filters)
-            filter.setFilterFrequency(state.frequency);
+            filter.setFilterFrequency(freq);
         upwardsCompressor.updateParams(state.upwdCompParams);
         compressor.updateParams(state.compParams);
     }
@@ -59,7 +58,6 @@ public:
 private:
     BandType bandType;
     std::vector<Filters::SecondOrderButterworth> filters;
-
 
     Compressor compressor;
     UpwardsCompressor upwardsCompressor;

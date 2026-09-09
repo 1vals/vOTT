@@ -35,6 +35,7 @@ public:
      *  3. create wrappers for the getter functions inside of juce::APVTS
      */
 
+    
 private:
     APVTS apvts;
 };
