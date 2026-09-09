@@ -39,8 +39,11 @@ public:
     float processSample(int channel, float inputValue, float threshold_, float ratio_) override {
         auto env = envelope.processSample(channel, inputValue);
 
+        constexpr float floor = 1.0e-5f;
+        threshold_ = std::max(threshold_, floor);
+
         auto gain = (env < threshold_) ? 1.f
-                                               : std::pow(env * (1 / threshold_), (1 / ratio_) - 1.f);
+                                               : std::pow(env / threshold_, (1 / ratio_) - 1.f);
 
         return gain * inputValue;
     }

@@ -44,7 +44,7 @@ public:
 private:
     float timeMs;
     float coeff = 0.f;
-    float current = 0.f, target = 0.f;
+    float current = 1.f, target = 1.f;
     int sampleRate = 44100;
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(ValueSmoother)

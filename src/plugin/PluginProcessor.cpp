@@ -10,31 +10,32 @@ OTTAudioProcessor::OTTAudioProcessor()
                       #endif
                        .withOutput ("Output", juce::AudioChannelSet::stereo(), true)
                      #endif
-                       )
+                       ),
+    strip1(vOTT::BandType::low)
 {
     // todo: make a function that does most of this initialization?
-    compParams.attack = dynamic_cast<juce::AudioParameterFloat*>(parameters.getParameter("Low Comp Attack"));
-    jassert (compParams.attack != nullptr);
-    compParams.release = dynamic_cast<juce::AudioParameterFloat*>(parameters.getParameter("Low Comp Release"));
-    jassert (compParams.release != nullptr);
-    compParams.threshold = dynamic_cast<juce::AudioParameterFloat*>(parameters.getParameter("Low Comp Threshold"));
-    jassert (compParams.threshold != nullptr);
-    compParams.ratio = dynamic_cast<juce::AudioParameterFloat*>(parameters.getParameter("Low Comp Ratio"));
-    jassert (compParams.ratio != nullptr);
+    lowBandState.compParams.attack = dynamic_cast<juce::AudioParameterFloat*>(parameters.getParameter("Low Comp Attack"));
+    jassert (lowBandState.compParams.attack != nullptr);
+    lowBandState.compParams.release = dynamic_cast<juce::AudioParameterFloat*>(parameters.getParameter("Low Comp Release"));
+    jassert (lowBandState.compParams.release != nullptr);
+    lowBandState.compParams.threshold = dynamic_cast<juce::AudioParameterFloat*>(parameters.getParameter("Low Comp Threshold"));
+    jassert (lowBandState.compParams.threshold != nullptr);
+    lowBandState.compParams.ratio = dynamic_cast<juce::AudioParameterFloat*>(parameters.getParameter("Low Comp Ratio"));
+    jassert (lowBandState.compParams.ratio != nullptr);
 
-    expParams.attack = dynamic_cast<juce::AudioParameterFloat*>(parameters.getParameter("Low Exp Attack"));
-    jassert (expParams.attack != nullptr);
-    expParams.release = dynamic_cast<juce::AudioParameterFloat*>(parameters.getParameter("Low Exp Release"));
-    jassert (expParams.release != nullptr);
-    expParams.threshold = dynamic_cast<juce::AudioParameterFloat*>(parameters.getParameter("Low Exp Threshold"));
-    jassert (expParams.threshold != nullptr);
-    expParams.ratio = dynamic_cast<juce::AudioParameterFloat*>(parameters.getParameter("Low Exp Ratio"));
-    jassert (expParams.ratio != nullptr);
+    lowBandState.upwdCompParams.attack = dynamic_cast<juce::AudioParameterFloat*>(parameters.getParameter("Low Exp Attack"));
+    jassert (lowBandState.upwdCompParams.attack != nullptr);
+    lowBandState.upwdCompParams.release = dynamic_cast<juce::AudioParameterFloat*>(parameters.getParameter("Low Exp Release"));
+    jassert (lowBandState.upwdCompParams.release != nullptr);
+    lowBandState.upwdCompParams.threshold = dynamic_cast<juce::AudioParameterFloat*>(parameters.getParameter("Low Exp Threshold"));
+    jassert (lowBandState.upwdCompParams.threshold != nullptr);
+    lowBandState.upwdCompParams.ratio = dynamic_cast<juce::AudioParameterFloat*>(parameters.getParameter("Low Exp Ratio"));
+    jassert (lowBandState.upwdCompParams.ratio != nullptr);
 
     // todo: refactor this to use a parameter listener, and use an atomic flag updated by parameterChanged()
     // this will require ApvtsWrapper to be updated to support listeners and that callback
-    frequency = dynamic_cast<juce::AudioParameterFloat*>(parameters.getParameter("Low Frequency"));
-    jassert (frequency != nullptr);
+    lowBandState.frequency = dynamic_cast<juce::AudioParameterFloat*>(parameters.getParameter("Low Frequency"));
+    jassert (lowBandState.frequency != nullptr);
 }
 
 OTTAudioProcessor::~OTTAudioProcessor()
@@ -109,13 +110,8 @@ void OTTAudioProcessor::changeProgramName (int index, const juce::String& newNam
 //==============================================================================
 void OTTAudioProcessor::prepareToPlay (double sampleRate, int samplesPerBlock)
 {
-    compressor.prepare(static_cast<int>(sampleRate));
-    compressor.forceUpdateAllParams(compParams);
-
-    expander.prepare(static_cast<int>(sampleRate));
-    expander.forceUpdateAllParams(expParams);
-
-    lowXover.prepare(static_cast<int>(sampleRate), getTotalNumOutputChannels());
+    strip1.prepare((int)sampleRate, getTotalNumOutputChannels());
+    strip1.forceUpdateCompParams(lowBandState);
 
     juce::ignoreUnused (sampleRate, samplesPerBlock);
 }
@@ -162,26 +158,12 @@ void OTTAudioProcessor::processBlock (juce::AudioBuffer<float>& buffer,
     for (auto i = totalNumInputChannels; i < totalNumOutputChannels; ++i)
         buffer.clear (i, 0, buffer.getNumSamples());
 
-    lowXover.setFilterFrequency(frequency->get());
-
-    compressor.setAttack(compParams.attack->get());
-    compressor.setRelease(expParams.release->get());
-    compressor.setThreshold(expParams.threshold->get());
-    compressor.setRatio(expParams.ratio->get());
-
-    expander.setAttack(expParams.attack->get());
-    expander.setRelease(expParams.release->get());
-    expander.setThreshold(expParams.threshold->get());
-    expander.setRatio(expParams.ratio->get());
-
+    strip1.updateParamsFromState(lowBandState);
+    
     auto block = juce::dsp::AudioBlock<float>(buffer);
     auto context = juce::dsp::ProcessContextReplacing<float>(block);
 
-    // lowXover.process(context);
-
-    expander.process(context);
-
-    // compressor.process(context);
+    strip1.process(context);
 }
 
 //==============================================================================

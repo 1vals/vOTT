@@ -6,8 +6,8 @@
 
 namespace vOTT {
 
-namespace Dynamics {
-    struct ParamPtrs {
+namespace State {
+    struct CompressorParams {
         juce::AudioParameterFloat* attack { nullptr };
         juce::AudioParameterFloat* release { nullptr };
         juce::AudioParameterFloat* threshold { nullptr };
@@ -20,7 +20,9 @@ public:
     DynamicsBase() = default;
     virtual ~DynamicsBase() = default;
 
-    virtual void forceUpdateAllParams(const Dynamics::ParamPtrs& params) {
+    virtual void forceUpdateAllParams(const State::CompressorParams& params) {
+        // this is called after prepare() because smoothed values would be uninitialized on plugin init,
+        // causing no audio to play until after the smoothed params were changed
         attack = params.attack->get();
         release = params.release->get();
         envelope.setAttackTime(attack);
@@ -32,26 +34,11 @@ public:
         smoothedThreshold.reset(juce::Decibels::decibelsToGain(thresholdDb, -100.f));
     }
 
-    virtual void updateParams(float threshold_, float ratio_, float attack_, float release_) {
-        if (attack != attack_) {
-            attack = attack_;
-            envelope.setAttackTime(attack);
-        }
-
-        if (release != release_) {
-            release = release_;
-            envelope.setReleaseTime(release);
-        }
-
-        if (thresholdDb != threshold_) {
-            thresholdDb = threshold_;
-            smoothedThreshold.setTarget(juce::Decibels::decibelsToGain(threshold_, -100.f));
-        }
-
-        if (ratio != ratio_) {
-            ratio = ratio_;
-            smoothedRatio.setTarget(ratio_);
-        }
+    virtual void updateParams(const State::CompressorParams& params) {
+        setAttack(params.attack->get());
+        setRelease(params.release->get());
+        setThreshold(params.threshold->get());
+        setRatio(params.ratio->get());
     }
 
     virtual void setAttack(float newAttack) {
@@ -101,7 +88,6 @@ public:
 protected:
     Envelope envelope;
 
-    // UI parameters
     float attack;
     float release;
     float thresholdDb;

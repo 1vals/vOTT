@@ -11,7 +11,7 @@ void Envelope::prepare(int sr) {
 float Envelope::calculateConstant(float ms) const noexcept {
     // would this run better async, or is that redundant?
     return ms < static_cast<float>(1.0e-3) ? 0
-                                           : static_cast<float>(std::exp(expFactor / ms));
+                                           : std::exp(expFactor / ms);
 }
 
 void Envelope::process(const juce::dsp::ProcessContextReplacing<float>& context) {
@@ -42,8 +42,7 @@ float Envelope::processSample(int channel, float inputValue) {
     // otherwise the release constant is applied
     float cte = (inputValue > y[(size_t) channel] ? constantAtk : constantRls);
 
-    // add the input value to the constant, then multiply it by the difference between the current
-    // and old values
+    // add the input value to the constant, then multiply it by the difference between the curren and old values
     float result = inputValue + cte * (y[(size_t) channel] - inputValue);
     y[(size_t) channel] = result;
 

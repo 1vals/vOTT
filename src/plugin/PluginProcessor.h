@@ -3,8 +3,7 @@
 #include <juce_audio_processors/juce_audio_processors.h>
 #include "PluginParameters.h"
 #include <dsp/dsp.h>
-#include <common/dsp/filters/LinkwitzRileyCrossover.h>
-
+#include <common/BandStrip.h>
 //==============================================================================
 class OTTAudioProcessor final : public juce::AudioProcessor
 {
@@ -46,18 +45,11 @@ public:
     void setStateInformation (const void* data, int sizeInBytes) override;
 
 private:
-    // vOTT::Filters::LinkwitzRileyCrossover lowXover;
-    vOTT::Filters::SecondOrderButterworth lowXover;
-    vOTT::Compressor compressor;
-    vOTT::UpwardsCompressor expander;
+    vOTT::BandStrip strip1;
 
     PluginParameters parameters {*this};
 
-    juce::AudioParameterFloat* frequency { nullptr };
-    float lastFrequency;
-
-    vOTT::Dynamics::ParamPtrs expParams;
-    vOTT::Dynamics::ParamPtrs compParams;
+    vOTT::State::BandState lowBandState;
 
     //==============================================================================
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (OTTAudioProcessor)

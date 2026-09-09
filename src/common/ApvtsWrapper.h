@@ -23,12 +23,19 @@ public:
         return apvts.getParameter(id);
     }
 
+    void createParameterListener(const juce::String& id, juce::AudioProcessorValueTreeState::Listener* listener) {
+        apvts.addParameterListener(id, listener);
+    }
+    void removeParameterListener(const juce::String& id, juce::AudioProcessorValueTreeState::Listener* listener) {
+        apvts.removeParameterListener(id, listener);
+    }
     /** todo:
      *  1. create wrappers for parameter attachments
      *  2. create wrappers for parameter listeners
      *  3. create wrappers for the getter functions inside of juce::APVTS
      */
 
+    
 private:
     APVTS apvts;
 };

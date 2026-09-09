@@ -13,7 +13,7 @@ class UpwardsCompressor : public DynamicsBase {
 public:
     ~UpwardsCompressor() override = default;
 
-    void forceUpdateAllParams(const Dynamics::ParamPtrs& params) override {
+    void forceUpdateAllParams(const State::CompressorParams& params) override {
         // make attack = release and vice versa to have the parameters resemble their effect on the sound more
         // realistically;
         attack = params.release->get();
@@ -27,13 +27,13 @@ public:
         smoothedThreshold.reset(juce::Decibels::decibelsToGain(thresholdDb, -100.f));
     }
 
-    virtual void setAttack(float newAttack) {
+    void setAttack(float newAttack) override {
         if (attack != newAttack) {
             attack = newAttack;
             envelope.setReleaseTime(attack); // set release instead of attack
         }
     }
-    virtual void setRelease(float newRelease) {
+    void setRelease(float newRelease) override {
         if (release != newRelease) {
             release = newRelease;
             envelope.setAttackTime(release); // set attack instead of release
@@ -71,9 +71,17 @@ public:
     float processSample(int channel, float inputValue, float threshold_, float ratio_) override {
         auto env = envelope.processSample(channel, inputValue);
 
+        constexpr float floor = 1.0e-5f;
+        env = std::max(env, floor);
+        threshold_ = std::max(threshold_, floor);
+
         // todo: small micro optimization, 1 / threshold can be stored & only calculated when threshold changes
         auto gain = (env > threshold_) ? 1.f
-                                            : std::pow(env * (1 / threshold_), (1 / ratio_) - 1.f);
+                                            : std::pow(env / threshold_, (1 / ratio_) - 1.f);
+
+        float output = gain * inputValue;
+        // DBG("env = " << env << ", threshold = " << threshold_ << ", gain = " << gain <<
+        //     ", output value = " << output);
 
         return gain * inputValue;
     }
