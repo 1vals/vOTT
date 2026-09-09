@@ -1,5 +1,4 @@
 add_library(common STATIC
-        ApvtsWrapper.h
         BandStrip.h
         BandStrip.cpp
 )

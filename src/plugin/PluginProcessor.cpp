@@ -11,30 +11,31 @@ OTTAudioProcessor::OTTAudioProcessor()
                        .withOutput ("Output", juce::AudioChannelSet::stereo(), true)
                      #endif
                        ),
-    strip1(vOTT::BandType::low)
+    strip1(vOTT::BandType::low),
+    apvts(*this, nullptr, "Parameters", vOTT::createParameterLayout())
 {
     // todo: make a function that does most of this initialization?
-    lowBandState.compParams.attack = dynamic_cast<juce::AudioParameterFloat*>(parameters.getParameter("Low Comp Attack"));
+    lowBandState.compParams.attack = dynamic_cast<juce::AudioParameterFloat*>(apvts.getParameter("Low Comp Attack"));
     jassert (lowBandState.compParams.attack != nullptr);
-    lowBandState.compParams.release = dynamic_cast<juce::AudioParameterFloat*>(parameters.getParameter("Low Comp Release"));
+    lowBandState.compParams.release = dynamic_cast<juce::AudioParameterFloat*>(apvts.getParameter("Low Comp Release"));
     jassert (lowBandState.compParams.release != nullptr);
-    lowBandState.compParams.threshold = dynamic_cast<juce::AudioParameterFloat*>(parameters.getParameter("Low Comp Threshold"));
+    lowBandState.compParams.threshold = dynamic_cast<juce::AudioParameterFloat*>(apvts.getParameter("Low Comp Threshold"));
     jassert (lowBandState.compParams.threshold != nullptr);
-    lowBandState.compParams.ratio = dynamic_cast<juce::AudioParameterFloat*>(parameters.getParameter("Low Comp Ratio"));
+    lowBandState.compParams.ratio = dynamic_cast<juce::AudioParameterFloat*>(apvts.getParameter("Low Comp Ratio"));
     jassert (lowBandState.compParams.ratio != nullptr);
 
-    lowBandState.upwdCompParams.attack = dynamic_cast<juce::AudioParameterFloat*>(parameters.getParameter("Low Exp Attack"));
+    lowBandState.upwdCompParams.attack = dynamic_cast<juce::AudioParameterFloat*>(apvts.getParameter("Low Exp Attack"));
     jassert (lowBandState.upwdCompParams.attack != nullptr);
-    lowBandState.upwdCompParams.release = dynamic_cast<juce::AudioParameterFloat*>(parameters.getParameter("Low Exp Release"));
+    lowBandState.upwdCompParams.release = dynamic_cast<juce::AudioParameterFloat*>(apvts.getParameter("Low Exp Release"));
     jassert (lowBandState.upwdCompParams.release != nullptr);
-    lowBandState.upwdCompParams.threshold = dynamic_cast<juce::AudioParameterFloat*>(parameters.getParameter("Low Exp Threshold"));
+    lowBandState.upwdCompParams.threshold = dynamic_cast<juce::AudioParameterFloat*>(apvts.getParameter("Low Exp Threshold"));
     jassert (lowBandState.upwdCompParams.threshold != nullptr);
-    lowBandState.upwdCompParams.ratio = dynamic_cast<juce::AudioParameterFloat*>(parameters.getParameter("Low Exp Ratio"));
+    lowBandState.upwdCompParams.ratio = dynamic_cast<juce::AudioParameterFloat*>(apvts.getParameter("Low Exp Ratio"));
     jassert (lowBandState.upwdCompParams.ratio != nullptr);
 
     // todo: refactor this to use a parameter listener, and use an atomic flag updated by parameterChanged()
     // this will require ApvtsWrapper to be updated to support listeners and that callback
-    lowBandState.frequency = dynamic_cast<juce::AudioParameterFloat*>(parameters.getParameter("Low Frequency"));
+    lowBandState.frequency = dynamic_cast<juce::AudioParameterFloat*>(apvts.getParameter("Low Frequency"));
     jassert (lowBandState.frequency != nullptr);
 }
 

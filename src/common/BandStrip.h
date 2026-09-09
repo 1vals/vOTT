@@ -13,7 +13,7 @@ namespace State {
     struct BandState {
         CompressorParams compParams;
         CompressorParams upwdCompParams;
-        juce::AudioProcessorParameter* frequency { nullptr };
+        juce::AudioParameterFloat* frequency { nullptr };
     };
 } // state
 
@@ -47,7 +47,7 @@ public:
     }
 
     void updateParamsFromState(const State::BandState& state) {
-        float freq = state.frequency->getValue();
+        float freq = state.frequency->get();
         for (auto& filter : filters)
             filter.setFilterFrequency(freq);
         upwardsCompressor.updateParams(state.upwdCompParams);

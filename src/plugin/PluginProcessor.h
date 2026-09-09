@@ -47,7 +47,8 @@ public:
 private:
     vOTT::BandStrip strip1;
 
-    PluginParameters parameters {*this};
+    juce::AudioProcessorValueTreeState apvts;
+    // PluginParameters parameters {*this};
 
     vOTT::State::BandState lowBandState;
 

@@ -75,8 +75,7 @@ public:
         env = std::max(env, floor);
         threshold_ = std::max(threshold_, floor);
 
-        // todo: small micro optimization, 1 / threshold can be stored & only calculated when threshold changes
-        auto gain = (env > threshold_) ? 1.f
+            auto gain = (env > threshold_) ? 1.f
                                             : std::pow(env / threshold_, (1 / ratio_) - 1.f);
 
         float output = gain * inputValue;

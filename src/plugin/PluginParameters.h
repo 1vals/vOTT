@@ -1,22 +1,9 @@
 #pragma once
 
-#include <common/ApvtsWrapper.h>
+namespace vOTT {
 
-/**
- * plugin/PluginParameters.h
- *
- * This file exists to create a parameterlayout for the plugin
- *
- * todo: figure out a way where the parameterLayout.add() shit can be condensed into loops & have the naming work right
- */
-
-class PluginParameters : public vOTT::ApvtsWrapper {
-public:
-    PluginParameters(juce::AudioProcessor& p) : ApvtsWrapper(p, createParameterLayout()) {}
-
-private:
-    static juce::AudioProcessorValueTreeState::ParameterLayout createParameterLayout() {
-        using namespace juce;
+inline juce::AudioProcessorValueTreeState::ParameterLayout createParameterLayout() {
+    using namespace juce;
         AudioProcessorValueTreeState::ParameterLayout layout;
 
         auto atkRlsRange = NormalisableRange<float>(0.f, 1000.f, 0.1f, 0.5f);
@@ -63,7 +50,5 @@ private:
                                                             2.5f));
 
         return layout;
-
     }
-    // todo: define this function
-};
+} // vOTT
