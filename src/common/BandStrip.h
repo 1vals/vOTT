@@ -24,7 +24,7 @@ public:
     void prepare(int sampleRate, int numChannels);
 
     void setFilterFrequency(float newFreq) {
-        for (auto& x : xovers)
+        for (auto& x : filters)
             x.setFilterFrequency(newFreq);
     }
     void updateCompressorParams(const Dynamics::ParamPtrs& params) {
@@ -33,8 +33,9 @@ public:
     void updateUpwardsCompParams(const Dynamics::ParamPtrs& params) {
         upwardsCompressor.updateParams(params);
     }
-    void forceUpdateAllParams(const Dynamics::ParamPtrs& compParams,
-                              const Dynamics::ParamPtrs& upwdCompParams) {
+    void forceUpdateCompParams(const Dynamics::ParamPtrs& compParams,
+                              const Dynamics::ParamPtrs& upwdCompParams //,
+                              /*const float& frequency*/) {
         compressor.forceUpdateAllParams(compParams);
         upwardsCompressor.forceUpdateAllParams(upwdCompParams);
     }
@@ -42,7 +43,8 @@ public:
     void process(const juce::dsp::ProcessContextReplacing<float>& context);
 private:
     BandType bandType;
-    std::vector<Filters::SecondOrderButterworth> xovers;
+    std::vector<Filters::SecondOrderButterworth> filters;
+
 
     Compressor compressor;
     UpwardsCompressor upwardsCompressor;

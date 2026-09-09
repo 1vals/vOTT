@@ -111,7 +111,7 @@ void OTTAudioProcessor::changeProgramName (int index, const juce::String& newNam
 void OTTAudioProcessor::prepareToPlay (double sampleRate, int samplesPerBlock)
 {
     strip1.prepare((int)sampleRate, getTotalNumOutputChannels());
-    strip1.forceUpdateAllParams(compParams, expParams);
+    strip1.forceUpdateCompParams(compParams, expParams);
 
     juce::ignoreUnused (sampleRate, samplesPerBlock);
 }
@@ -160,7 +160,7 @@ void OTTAudioProcessor::processBlock (juce::AudioBuffer<float>& buffer,
 
     strip1.updateCompressorParams(compParams);
     strip1.updateUpwardsCompParams(expParams);
-    // strip1.setFilterFrequency(lowXoverFreq->get());
+    strip1.setFilterFrequency(lowXoverFreq->get());
 
     auto block = juce::dsp::AudioBlock<float>(buffer);
     auto context = juce::dsp::ProcessContextReplacing<float>(block);
