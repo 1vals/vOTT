@@ -142,7 +142,7 @@ private:
 
     float centerFreq;
     float omega0, alpha;
-    float Q = 1 / std::sqrt(2.f);
+    float Q = 1 / std::sqrt(2.f); // can make this a constant
     int sampleRate = 44100;
 
     FilterType filterType = lowpass;
