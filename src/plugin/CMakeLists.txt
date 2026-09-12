@@ -40,6 +40,7 @@ target_link_libraries(V_OTT
     PRIVATE
         common
         dsp
+        melatonin_inspector
         juce::juce_dsp
         juce::juce_audio_utils
     PUBLIC
