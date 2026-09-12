@@ -175,8 +175,8 @@ bool OTTAudioProcessor::hasEditor() const
 
 juce::AudioProcessorEditor* OTTAudioProcessor::createEditor()
 {
-    // return new OTTAudioProcessorEditor (*this);
-    return new juce::GenericAudioProcessorEditor(*this);
+    return new OTTAudioProcessorEditor (*this);
+    // return new juce::GenericAudioProcessorEditor(*this);
 }
 
 //==============================================================================
